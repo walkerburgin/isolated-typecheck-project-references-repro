@@ -1,0 +1,5 @@
+packages:
+ - pkgs/*
+
+catalog:
+  "vite": "^6.0.1"

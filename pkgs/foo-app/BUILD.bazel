@@ -1,0 +1,94 @@
+load("@aspect_rules_js//js:defs.bzl", "js_library", "js_run_binary", "js_run_devserver")
+load("@aspect_rules_swc//swc:defs.bzl", "swc")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
+load("@bazel_skylib//lib:partial.bzl", "partial")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@npm//:vite/package_json.bzl", vite = "bin")
+
+npm_link_all_packages(name = "node_modules")
+
+ts_project(
+    name = "typescript",
+    srcs = [
+        "src/App.tsx",
+        "src/main.tsx",
+    ],
+    assets = [],
+    composite = True,
+    incremental = True,
+    isolated_typecheck = True,
+    out_dir = "dist",
+    root_dir = "src",
+    transpiler = partial.make(
+        swc,
+        out_dir = "dist",
+        root_dir = "src",
+        swcrc = ".swcrc",
+    ),
+    deps = [
+        ":node_modules/@monorepo/foo-lib",
+        ":node_modules/@types/react",
+        ":node_modules/@types/react-dom",
+        ":node_modules/react",
+        ":node_modules/react-dom",
+    ],
+)
+
+vite.vite_binary(name = "vite_binary")
+
+js_run_binary(
+    name = "vite",
+    srcs = [
+        "index.html",
+        "vite.config.mjs",
+        ":typescript",
+    ] + glob(["ssl/**"]),
+    args = [
+        "build",
+        "--config",
+        "vite.config.mjs",
+    ],
+    chdir = "pkgs/foo-app",
+    include_transitive_types = False,
+    include_types = False,
+    mnemonic = "Vite",
+    out_dirs = ["bundle"],
+    tool = ":vite_binary",
+)
+
+js_run_devserver(
+    name = "dev",
+    args = [
+        "--config",
+        "vite.config.mjs",
+        "--clearScreen",
+        "false",
+    ],
+    chdir = "pkgs/foo-app",
+    data = [
+        "index.html",
+        "vite.config.mjs",
+        ":typescript",
+    ] + glob(["ssl/**"]),
+    include_transitive_types = False,
+    include_types = False,
+    tool = ":vite_binary",
+)
+
+js_library(
+    name = "pkg",
+    srcs = [
+        "package.json",
+        "tsconfig.json",
+        ":vite",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "foo-app",
+    srcs = [
+        "pkg",
+        "typescript_typecheck",
+    ],
+)
