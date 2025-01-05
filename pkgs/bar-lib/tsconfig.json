@@ -2,6 +2,8 @@
   "compilerOptions": {
     "incremental": true,
     "composite": true,
+    "declaration": true,
+    "declarationMap": true,
     "target": "es2022",
     "jsx": "react",
     "module": "esnext",
@@ -13,7 +15,8 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "plugins": [{ "name": "ts-bazel-plugin" }]
   },
   "include": ["src"],
 }

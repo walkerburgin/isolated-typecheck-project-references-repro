@@ -13,6 +13,8 @@ ts_project(
         "src/index.ts",
     ],
     composite = True,
+    declaration = True,
+    declaration_map = True,
     incremental = True,
     isolated_typecheck = True,
     out_dir = "dist",

@@ -17,6 +17,9 @@ importers:
       prettier:
         specifier: ^3
         version: 3.4.1
+      ts-bazel-plugin:
+        specifier: ^0.1.0
+        version: 0.1.0(typescript@5.7.2)
       typescript:
         specifier: 5.7.2
         version: 5.7.2
@@ -1779,6 +1782,14 @@ packages:
     engines: {node: '>=16'}
     peerDependencies:
       typescript: '>=4.2.0'
+    dependencies:
+      typescript: 5.7.2
+    dev: true
+
+  /ts-bazel-plugin@0.1.0(typescript@5.7.2):
+    resolution: {integrity: sha512-ZdBS6eF+VmFR2EoNpK4zvNo6nj7iLNW6rRJjNrWxfDVJkW6AKZvYRbk1ZYbKYyUAyeKs9XEycBGHVhj/UKfrfQ==}
+    peerDependencies:
+      typescript: ^5.4.5
     dependencies:
       typescript: 5.7.2
     dev: true
