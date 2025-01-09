@@ -1,10 +1,19 @@
 load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("@aspect_rules_swc//swc:defs.bzl", "swc")
-load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config", "ts_project")
 load("@bazel_skylib//lib:partial.bzl", "partial")
 load("@npm//:defs.bzl", "npm_link_all_packages")
 
 npm_link_all_packages(name = "node_modules")
+
+ts_config(
+    name = "tsconfig",
+    src = "tsconfig.json",
+    visibility = ["//pkgs/foo-app:__pkg__"],
+    deps = [
+        "//pkgs/bar-lib:tsconfig",
+    ],
+)
 
 ts_project(
     name = "typescript",
@@ -25,6 +34,7 @@ ts_project(
         root_dir = "src",
         swcrc = ".swcrc",
     ),
+    tsconfig = ":tsconfig",
     deps = [
         ":node_modules/@monorepo/bar-lib",
         ":node_modules/@types/react",

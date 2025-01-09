@@ -1,11 +1,19 @@
 load("@aspect_rules_js//js:defs.bzl", "js_library", "js_run_binary", "js_run_devserver")
 load("@aspect_rules_swc//swc:defs.bzl", "swc")
-load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config", "ts_project")
 load("@bazel_skylib//lib:partial.bzl", "partial")
 load("@npm//:defs.bzl", "npm_link_all_packages")
 load("@npm//:vite/package_json.bzl", vite = "bin")
 
 npm_link_all_packages(name = "node_modules")
+
+ts_config(
+    name = "tsconfig",
+    src = "tsconfig.json",
+    deps = [
+        "//pkgs/foo-lib:tsconfig",
+    ],
+)
 
 ts_project(
     name = "typescript",
@@ -27,6 +35,7 @@ ts_project(
         root_dir = "src",
         swcrc = ".swcrc",
     ),
+    tsconfig = ":tsconfig",
     deps = [
         ":node_modules/@monorepo/foo-lib",
         ":node_modules/@types/react",
@@ -43,6 +52,7 @@ js_run_binary(
     srcs = [
         "index.html",
         "vite.config.mjs",
+        ":node_modules",
         ":typescript",
     ] + glob(["ssl/**"]),
     args = [
